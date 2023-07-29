@@ -4,6 +4,8 @@ import cats.effect._
 import forex.config._
 import fs2.Stream
 import org.http4s.server.blaze.BlazeServerBuilder
+import io.chrisdavenport.log4cats.Logger
+import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 
 import scala.concurrent.ExecutionContext
 
@@ -15,6 +17,9 @@ object Main extends IOApp {
 }
 
 class Application[F[_]: ConcurrentEffect: Timer] {
+
+  implicit val logger = Slf4jLogger.getLogger[IO]
+  Logger[IO].info(s"Loaded config and run stream")
 
   def stream(ec: ExecutionContext): Stream[F, Unit] =
     for {
