@@ -16,6 +16,8 @@ object Dependencies {
     val scalaCheck          = "1.15.3"
     val scalaTest           = "3.2.7"
     val catsScalaCheck      = "0.3.0"
+
+    val enumeratum          = "1.7.3"
   }
 
   object Libraries {
@@ -47,6 +49,7 @@ object Dependencies {
     val scalaCheck          = "org.scalacheck"        %% "scalacheck"                 % Versions.scalaCheck
     val catsScalaCheck      = "io.chrisdavenport"     %% "cats-scalacheck"            % Versions.catsScalaCheck
 
+    val enumeratum          = "com.beachape"          %% "enumeratum-cats"            % Versions.enumeratum
   }
 
 }

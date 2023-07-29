@@ -1,11 +1,15 @@
 package forex.http.rates
 
+import cats.Show
 import forex.domain.Currency.show
 import forex.domain.Rate.Pair
 import forex.domain._
+import forex.programs.rates.errors
 import io.circe._
 import io.circe.generic.extras.Configuration
-import io.circe.generic.extras.semiauto.deriveConfiguredEncoder
+import io.circe.generic.semiauto.deriveEncoder
+import org.http4s.QueryParamDecoder
+import org.http4s.dsl.impl.QueryParamDecoderMatcher
 
 object Protocol {
 
@@ -15,6 +19,8 @@ object Protocol {
       from: Currency,
       to: Currency
   )
+
+  implicit val GetApiResponseShow = Show.show[GetApiResponse](p => s"${p.from}${p.to}${p.price}${p.timestamp}")
 
   final case class GetApiResponse(
       from: Currency,
@@ -27,12 +33,20 @@ object Protocol {
     Encoder.instance[Currency] { show.show _ andThen Json.fromString }
 
   implicit val pairEncoder: Encoder[Pair] =
-    deriveConfiguredEncoder[Pair]
+    deriveEncoder[Pair]
 
   implicit val rateEncoder: Encoder[Rate] =
-    deriveConfiguredEncoder[Rate]
+    deriveEncoder[Rate]
 
   implicit val responseEncoder: Encoder[GetApiResponse] =
-    deriveConfiguredEncoder[GetApiResponse]
+    deriveEncoder[GetApiResponse]
+
+  private[http] implicit val currencyParam = QueryParamDecoder[String].map { currName =>
+    import cats.implicits._
+    Currency.fromString(currName).leftMap(errors.toProgramError)
+  }
+
+  object FromParam extends QueryParamDecoderMatcher[errors.Error Either Currency]("from")
+  object ToParam extends QueryParamDecoderMatcher[errors.Error Either Currency]("to")
 
 }
