@@ -70,9 +70,11 @@ libraryDependencies ++= Seq(
   Libraries.logback,
   Libraries.log4cats,
   Libraries.scalaTest        % Test,
-  Libraries.scalaCheck       % Test,
-  Libraries.catsScalaCheck   % Test,
-  Libraries.enumeratum
+  Libraries.scalaCheck,
+  Libraries.catsScalaCheck,
+  Libraries.enumeratum,
+  Libraries.weaverTest,
+  Libraries.weaverCheck
   )++ List(Libraries.contextApplied, Libraries.betterMonadic).map(compilerPlugin(_)),
 testFrameworks += new TestFramework("weaver.framework.TestFramework")
 )
