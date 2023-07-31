@@ -72,5 +72,5 @@ object PaidyOneFrameRateClient {
       client: Client[F],
       token: String
   ): F[PaidyOneFrameRateClient[F]] =
-    F.delay(new PaidyOneFrameRateClient[F](oneFrameUri, client, token))
+    cats.effect.Sync[F].delay(new PaidyOneFrameRateClient[F](oneFrameUri, client, token))
 }

@@ -1,12 +1,13 @@
 package forex.http.rates
 
 import cats.effect.Sync
-import cats.implicits.catsSyntaxApplicativeError
+import cats.implicits.{catsSyntaxApplicativeError, toFunctorOps}
 import cats.syntax.flatMap._
 import forex.programs.RatesProgram
-import forex.programs.rates.{Protocol => RatesProgramProtocol}
+import forex.programs.rates.Protocol.GetRatesRequest
 import io.chrisdavenport.log4cats.Logger
 import org.http4s.HttpRoutes
+import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.Router
 
@@ -22,11 +23,14 @@ class RatesHttpRoutes[F[_]: Sync: Logger](rates: RatesProgram[F]) extends Http4s
   private val httpRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root :? FromQueryParam(from) +& ToQueryParam(to) =>
 
-      val result = rates.get(RatesProgramProtocol.GetRatesRequest(from, to))
-           .flatMap(Sync[F].fromEither)
-           .flatMap { rate =>
-        Ok(rate.asGetApiResponse)
-      }
+      val result = for {
+
+        from <- Sync[F].fromEither(from)
+        to <- Sync[F].fromEither(to)
+        rateOrErr <- rates.get(GetRatesRequest(from, to))
+        rate <- Sync[F].fromEither(rateOrErr)
+        res <- Ok(rate.asGetApiResponse)
+      } yield res
 
       result.handleErrorWith {
         case Error.CurrencyNotSupported(curr) =>
@@ -38,6 +42,10 @@ class RatesHttpRoutes[F[_]: Sync: Logger](rates: RatesProgram[F]) extends Http4s
         case err =>
           Logger[F].error(s"Internal error: ${err.getMessage}") >> InternalServerError()
       }
+
+    // GET /rates - get all supported combinations of rates
+    case GET -> Root => Ok(rates.allRates.compile.toList.map(r => r.map(_.asGetApiResponse)))
+
   }
 
   val routes: HttpRoutes[F] = Router(

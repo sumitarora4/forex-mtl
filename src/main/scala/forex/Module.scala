@@ -1,15 +1,16 @@
 package forex
 
 import cats.effect.{Concurrent, Timer}
-import forex.config.ApplicationConfig
+import forex.config.config.ApplicationConfig
 import forex.http.rates.RatesHttpRoutes
 import forex.programs._
 import forex.services._
+import io.chrisdavenport.log4cats.Logger
 import org.http4s._
 import org.http4s.implicits._
 import org.http4s.server.middleware.{AutoSlash, Timeout}
 
-class Module[F[_]: Concurrent: Timer](config: ApplicationConfig) {
+class Module[F[_]: Concurrent: Timer: Logger](config: ApplicationConfig) {
 
   private val ratesService: RatesService[F] = RatesServices.dummy[F]
 

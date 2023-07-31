@@ -20,7 +20,8 @@ object Protocol {
       to: Currency
   )
 
-  implicit val GetApiResponseShow = Show.show[GetApiResponse](p => s"${p.from}${p.to}${p.price}${p.timestamp}")
+  implicit lazy val GetApiResponseShow = Show.show[GetApiResponse](p => s"${p.from}${p.to}${p.price}${p.timestamp}")
+  implicit lazy val RateShow =  { Show.show[Rate](p => s"${p.pair}${p.price}${p.timestamp}")}
 
   final case class GetApiResponse(
       from: Currency,

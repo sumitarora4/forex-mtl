@@ -10,13 +10,13 @@ import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import scala.concurrent.ExecutionContext
 
 object Main extends IOApp {
-
+  implicit val logger = Slf4jLogger.getLogger[IO]
   override def run(args: List[String]): IO[ExitCode] =
     new Application[IO].stream(executionContext).compile.drain.as(ExitCode.Success)
 
 }
 
-class Application[F[_]: ConcurrentEffect: Timer] {
+class Application[F[_]: ConcurrentEffect: Timer: Logger] {
 
   implicit val logger = Slf4jLogger.getLogger[IO]
   Logger[IO].info(s"Loaded config and run stream")
