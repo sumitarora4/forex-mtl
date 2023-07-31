@@ -35,5 +35,4 @@ object config {
     import pureconfig.generic.auto._
   Sync[F].fromTry(Try(ConfigSource.default.at(path).loadOrThrow[ApplicationConfig]))
   }
-  //  ConfigSource.load[ApplicationConfig]
 }

@@ -25,10 +25,10 @@ class RatesHttpRoutes[F[_]: Sync: Logger](rates: RatesProgram[F]) extends Http4s
 
       val result = for {
 
-        from <- Sync[F].fromEither(from)
-        to <- Sync[F].fromEither(to)
+        from <- F.fromEither(from)
+        to <- F.fromEither(to)
         rateOrErr <- rates.get(GetRatesRequest(from, to))
-        rate <- Sync[F].fromEither(rateOrErr)
+        rate <- F.fromEither(rateOrErr)
         res <- Ok(rate.asGetApiResponse)
       } yield res
 

@@ -49,6 +49,10 @@ scalacOptions ++= Seq(
 resolvers +=
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
+lazy val root = (project in file("."))
+  .settings(
+    name := "forex",
+    Defaults.itSettings,
 libraryDependencies ++= Seq(
   compilerPlugin(Libraries.kindProjector),
   Libraries.cats,
@@ -69,4 +73,13 @@ libraryDependencies ++= Seq(
   Libraries.scalaCheck       % Test,
   Libraries.catsScalaCheck   % Test,
   Libraries.enumeratum
+  )++ List(Libraries.contextApplied, Libraries.betterMonadic).map(compilerPlugin(_)),
+testFrameworks += new TestFramework("weaver.framework.TestFramework")
 )
+.configs(IntegrationTest)
+  .enablePlugins(DockerPlugin, AshScriptPlugin)
+  .settings(
+    dockerBaseImage := "openjdk:8-alpine",
+    dockerExposedPorts ++= Seq(9090),
+    dockerUpdateLatest := true
+  )

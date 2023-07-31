@@ -18,6 +18,7 @@ object Dependencies {
     val catsScalaCheck      = "0.3.0"
 
     val enumeratum          = "1.7.3"
+    val weaverTest          = "0.4.2-RC1"
   }
 
   object Libraries {
@@ -40,6 +41,7 @@ object Dependencies {
 
     // Compiler plugins
     val kindProjector       = "org.typelevel"         %% "kind-projector"             % Versions.kindProjector
+    val contextApplied      = "org.augustjune"        %% "context-applied"            % "0.1.3"
 
     // Runtime
     val log4cats            = "io.chrisdavenport"     %% "log4cats-slf4j"             % Versions.log4cats
@@ -51,6 +53,11 @@ object Dependencies {
     val catsScalaCheck      = "io.chrisdavenport"     %% "cats-scalacheck"            % Versions.catsScalaCheck
 
     val enumeratum          = "com.beachape"          %% "enumeratum-cats"            % Versions.enumeratum
+
+    val weaverTest          = "com.disneystreaming"   %% "weaver-framework"           % Versions.weaverTest % "test,it"
+    val weaverCheck         = "com.disneystreaming"   %% "weaver-scalacheck"          % Versions.weaverTest % "test,it"
+
+    val betterMonadic       = "com.olegpy"                  %% "better-monadic-for"         % "0.3.1"
   }
 
 }

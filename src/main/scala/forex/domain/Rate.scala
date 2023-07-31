@@ -1,6 +1,7 @@
 package forex.domain
 
 import cats.Show
+import cats.data.NonEmptyList
 import cats.implicits._
 import java.time.OffsetDateTime
 import forex.services.rates.errors
@@ -33,4 +34,7 @@ object Rate {
   def pairCreate(from: Currency, to: Currency): errors.Error Either Pair =
     if (from == to) errors.Error.DoublePair.asLeft
     else Pair(from, to).asRight
+
+  def allCurrencyPairs: NonEmptyList[Pair] =
+    Currency.allCombinations.map { case (c1, c2) => Pair(c1, c2) }
 }
